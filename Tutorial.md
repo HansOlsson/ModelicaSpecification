@@ -392,7 +392,7 @@ for the time constants, T1 and T2, the input, u and the output y as accessible f
 The realization of the model, using two instances of model LowPassFilter, is a protected detail.
 Modelica allows such information hiding by using the heading protected.
 ```Modelica
- model FiltersInSeries2
+model FiltersInSeries2
  parameter Real T1=2, T2=3;
  input Real u;
  output Real y;
