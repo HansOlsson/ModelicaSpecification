@@ -916,7 +916,7 @@ Connections.uniqueRoot(a.R, msg)
 \begin{semantics}
 The overdetermined type or record instance \lstinline!R! in connector instance \lstinline!a! is a \firstuse[definite root node]{(definite) root node}\index{root node!definite} in a virtual connection graph.
 The input \lstinline!a! may be an array, in which case the operator is applied to each element of the array.
-Every virtual state diagram graph must have exactly one \lstinline!uniqueRoot! definition (and no normal or potential roots), before breakable branches are removed.
+Every virtual connection graph that contains a \lstinline!uniqueRoot! must have exactly one \lstinline!uniqueRoot! definition (and no normal or potential roots), before breakable branches are removed.
 The second argument is a message that shall be reported if the root is not unique together with the component paths of the roots; if two unique roots are connected and the message arguments are different either or both arguments may be used.
 
 \begin{nonnormative}
