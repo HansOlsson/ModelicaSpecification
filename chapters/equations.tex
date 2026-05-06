@@ -227,6 +227,7 @@ The start value of the special functions \lstinline!initial!, \lstinline!termina
   \lstinline!when!-equations cannot be nested.
 \item
   \lstinline!when!-equations can only occur within \lstinline!if!-equations and \lstinline!for!-equations if the controlling expressions are exclusively evaluable expressions.
+  For \lstinline!if!-equations this requires that the condition of the branch containing the \lstinline!when!-equation and the conditions of all preceding branches are evaluable.
 \end{itemize}
 
 \begin{example}
