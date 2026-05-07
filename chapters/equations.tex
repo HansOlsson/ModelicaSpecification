@@ -42,9 +42,10 @@ No statements are allowed in equation sections, including the assignment stateme
 
 Simple equality equations are the traditional kinds of equations known from mathematics that express an equality relation between two expressions.
 The syntax is given by \productionref{simple-equation} in the grammar, and can be divided into two cases depending on the form of the left-hand side \productionref{simple-expression}.
-If the left-hand side is a parenthesized \productionref{output-expression-list}, the equation expresses equalities between the expressions in the left-hand side list and the corresponding results of calling a function with several outputs.
+If the left-hand side is a parenthesized non-trivial \productionref{output-expression-list}, the equation expresses equalities between the expressions in the left-hand side list and the corresponding results of calling a function with multiple outputs.
+Here, \firstuse[---]{non-trivial} means that the \productionref{output-expression-list} is empty or contains at least one comma, making the left-hand side distinguishable from a parenthesized expression.
 Otherwise, the equation expresses a single equality between the left-hand side and right-hand side expressions.
-The types of the left-hand-side and the right-hand-side of an equation need to be compatible in the same way as two arguments of binary operators (\cref{type-compatible-expressions}).
+The types of the left-hand side and the right-hand side of an equation need to be compatible in the same way as two arguments of binary operators (\cref{type-compatible-expressions}).
 
 Three examples:
 \begin{itemize}
@@ -55,7 +56,7 @@ Three examples:
 
 \begin{nonnormative}
 Note: According to the grammar the if-then-else expression in the second example needs to be enclosed in parentheses to avoid parsing ambiguities.
-Also compare with \cref{assignments-from-called-functions-with-multiple-results} about calling functions with several results in assignment statements.
+Also compare with \cref{assignments-from-called-functions-with-multiple-results} about calling functions with multiple outputs in assignment statements.
 \end{nonnormative}
 
 
@@ -116,11 +117,11 @@ equation
 \subsection{Connect-Equations}\label{connect-equations}
 
 The syntax of a \lstinline!connect!-equation is given by \productionref{connect-equation} in the grammar.
-These can be placed inside \lstinline!for!-equations and \lstinline!if!-equations; provided the indices of the \lstinline!for!-loop and conditions of the \lstinline!if!-equation are evaluable expressions that do not depend on \lstinline!cardinality!, \lstinline!rooted!, \lstinline!Connections.rooted!, or \lstinline!Connections.isRoot!.
+These can be placed inside \lstinline!for!-equations and \lstinline!if!-equations; provided the indices of the \lstinline!for!-loop and conditions of the \lstinline!if!-equation are evaluable expressions that do not depend on \lstinline!cardinality!, \lstinline!rooted!, \lstinline!Connections.rooted!, or \lstinline!Connections.isRoot!, or \lstinline!Connections.uniqueRootIndices!.
 The \lstinline!for!-equations/\lstinline!if!-equations are expanded.
 \lstinline!connect!-equations are described in detail in \cref{connect-equations-and-connectors}.
 
-The same restrictions apply to \lstinline!Connections.branch!, \lstinline!Connections.root!, and \lstinline!Connections.potentialRoot!; which after expansion are handled according to \cref{equation-operators-for-overconstrained-connection-based-equation-systems1}.
+The same restrictions apply to \lstinline!Connections.branch!, \lstinline!Connections.root!, \lstinline!Connections.potentialRoot!, and \lstinline!Connections.uniqueRoot!; which after expansion are handled according to \cref{equation-operators-for-overconstrained-connection-based-equation-systems1}.
 
 
 \subsection{If-Equations}\label{if-equations}
@@ -139,7 +140,7 @@ The \lstinline!if!-equations which do not have exclusively evaluable expressions
   Have the same number of equations in each branch, where the number of equations is defined as in \cref{local-equation-size}.
   Absence of an \lstinline!else!-branch is treated as having a branch with zero equations.
 \item
-  Non-\lstinline!Real! simple equality equations (see \cref{simple-equality-equations}) in the \lstinline!if!-equation branches shall have component-references (or a list of them) as their left-hand-side.
+  Non-\lstinline!Real! simple equality equations (see \cref{simple-equality-equations}) in the \lstinline!if!-equation branches shall have component-references (or a list of them) as their left-hand side.
   Any subscripts for such component-references must be evaluable.
   Any \lstinline!for!- and \lstinline!if!-equations in the \lstinline!if!-equation branches shall have evaluable controlling conditions, and contain equations which fullfil these requirements recursively.
   All branches shall have the same set of variables in the non-\lstinline!Real! equations.
@@ -259,7 +260,7 @@ Additionally,
   The different branches of \lstinline!when!/\lstinline!elsewhen! must have the same set of component references on the left-hand side.
   Here, the destination variable of a \lstinline!reinit! (including when inside a \lstinline!when!-clause activated with \lstinline!initial()!) is not considered a left-hand side, and hence \lstinline!reinit! is unaffected by this requirement (as are \lstinline!assert! and \lstinline!terminate!).
 \item
-  The branches of an \lstinline!if!-equation inside \lstinline!when!-equations must have the same set of component references on the left-hand side, unless all switching conditions of the \lstinline!if!-equation are parameter expressions.
+  The branches of an \lstinline!if!-equation inside \lstinline!when!-equations must have the same set of component references on the left-hand side, unless all switching conditions of the \lstinline!if!-equation are evaluable expressions.
 \item
   Any left-hand side reference, (\lstinline!v!, \lstinline!out1!, \ldots), in a \lstinline!when!-clause must be a component reference, and any indices must be evaluable expressions.
 \end{itemize}

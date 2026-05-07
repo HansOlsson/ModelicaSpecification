@@ -51,7 +51,7 @@ end $\mathit{functionname}$;
 \subsection{Ordering of Formal Parameters}\label{ordering-of-formal-parameters}
 
 The relative ordering between input formal parameter declarations is significant since that determines the matching between actual arguments and formal parameters at function calls with positional parameter passing.
-Likewise, the relative ordering between the declarations of the outputs is significant since that determines the matching with receiving variables at function calls of functions with multiple results.
+Likewise, the relative ordering between the declarations of the outputs is significant since that determines the matching with receiving variables at function calls of functions with multiple outputs.
 However, the declarations of the inputs and outputs can be intermixed as long as these internal orderings are preserved.
 
 \begin{nonnormative}
@@ -169,7 +169,7 @@ Modelica functions have the following restrictions compared to a general Modelic
 \item
   There are many Modelica built-in operators that are not allowed to be used in functions, including \lstinline!der!, \lstinline!initial!, \lstinline!terminal!, \lstinline!sample!, \lstinline!pre!, \lstinline!edge!, \lstinline!change!, \lstinline!reinit!, \lstinline!delay!, \lstinline!cardinality!, \lstinline!inStream!, \lstinline!actualStream!, the operators of the built-in package \lstinline!Connections!, the operators defined in \cref{synchronous-language-elements} and \cref{state-machines}.
 \item
-  The dimension \emph{sizes} not declared with colon (\lstinline!:!) of each array result or array local variable (i.e., a non-input component) of a function must be either given by the input formal parameters, or given by constant or parameter expressions, or by expressions containing combinations of those (\cref{initialization-and-binding-equations-of-components-in-functions}).
+  The dimension \emph{sizes} not declared with colon (\lstinline!:!) of each array result or array local variable (i.e., a non-input component) of a function must be either given by the input formal parameters, or given by constant or evaluable expressions, or by expressions containing combinations of those (\cref{initialization-and-binding-equations-of-components-in-functions}).
 \item
   For initialization of local variables of a function see \cref{initialization-and-binding-equations-of-components-in-functions}).
 \item
@@ -814,7 +814,7 @@ There are basically four groups of built-in functions in Modelica:
 
 \section{Record Constructor Functions}\label{record-constructor-functions}
 
-Whenever a record is defined, a record constructor function with the same name and in the same scope as the record class is implicitly defined according to the following rules:
+Whenever a scalar record is defined, a record constructor function with the same name and in the same scope as the record class is implicitly defined according to the following rules:
 
 % Warning: 'partial flatteing' doesn't seem to be defined.  See 'partial instantitation'.
 The declaration of the record is partially flattened including inheritance, modifications, redeclarations, and expansion of all names referring to declarations outside of the scope of the record to their fully qualified names.
@@ -837,6 +837,7 @@ An instance of the record is declared as output parameter using a name not appea
 In the modification, all input parameters are used to set the corresponding record variables.
 
 A record constructor can only be called if the referenced record class is found in the global scope, and thus cannot be modified.
+The record constructor can be used in vectorized form according to \cref{scalar-functions-applied-to-array-arguments}.
 
 \begin{nonnormative}
 This allows constructing an instance of a record, with an optional modification, at all places where a function call is allowed.
@@ -962,6 +963,8 @@ Demo.Record2 r2 =
   Demo.Record2(1, 2, 2, 3, 1, 2, 5, 5, {1, 2}, {1, 2, 3});
 parameter Demo.Record2 r3 =
   Demo.Record2(c2 = 2, n2 = 1, r1 = 1, r4 = 4, r6 = 1 : 5, r7 = {1});
+parameter Demo.Record2 r4[2] =
+  Demo.Record2(c2 = 2, n2 = {1, 2}, r1 = 1, r4 = {4, 5}, r6 = 1 : 5, r7 = {1});
 \end{lstlisting}
 
 The above example is only used to show the different variants appearing with prefixes, but it is not very meaningful, because it is simpler to just use a direct modifier.
@@ -2118,14 +2121,20 @@ A Modelica record class is mapped as follows:
 \begin{itemize}
 \item
   The record class is represented by a struct in C.
+  A definition of the struct may be specified using the annnotations in \cref{annotations-for-c-mapping-of-records}.
 \item
   Each component of the Modelica record is mapped to its corresponding C representation.
   A nested record component is mapped to a nested struct component.
 \item
-  The components of the Modelica record class are declared in the same order in the C struct.
-\item
   Records containing arrays cannot be mapped.
 \end{itemize}
+
+Some requirements only apply when the C mapping of a record class is needed.
+The C mapping is only needed when the record appears in the input and output types of some \lstinline!external!-clause.
+
+The \lstinline!Include! annotation (providing the struct definition, see \cref{modelica:Include}) is required when the C mapping of the record class is needed.
+A deprecated semantics is that the \lstinline!Include! annotation may be omitted.
+In this case, the struct is assumed to have standard padding and the same members in the same order as the record class, and the \lstinline!CStructTag! and \lstinline!CName! annotations apply as usual.
 
 Scalar records that are the return value of the C function are returned by value.
 Other scalar records are passed as pointers (by reference).
@@ -2180,9 +2189,10 @@ Return types are by default mapped as follows for C and FORTRAN~77:
 {\lstinline!Integer!} & {\lstinline[language=C]!int!}         & {\lstinline[language=FORTRAN77]!INTEGER!}\\
 {\lstinline!Boolean!} & {\lstinline[language=C]!int!}         & {\lstinline[language=FORTRAN77]!LOGICAL!}\\
 {\lstinline!String!}  & {\lstinline[language=C]!const char*!} & \emph{Not allowed}\\
-{\lstinline!T[$\mathit{dim}_{1}$, $\ldots$, $\mathit{dim}_{n}$]!} & \emph{Not allowed} & \emph{Not allowed} \\
-Enumeration type    & {\lstinline[language=C]!int!}         & {\lstinline[language=FORTRAN77]!INTEGER!}\\
-Record              & \lstinline[language=C]!struct CRec! & \emph{Not allowed}\\
+{\lstinline!T[$\mathit{dim}_{1}$, $\ldots$, $\mathit{dim}_{n}$]!}
+                      & \emph{Not allowed}                    & \emph{Not allowed} \\
+Enumeration type      & {\lstinline[language=C]!int!}         & {\lstinline[language=FORTRAN77]!INTEGER!}\\
+Record                & See \cref{records}                    & \emph{Not allowed}\\
 \hline
 \end{tabular}
 \end{center}
@@ -2308,6 +2318,27 @@ It shall not refer to an obj-file.
 /*literal*/ constant String Include
 \end{lstlisting}\end{synopsis}
 \begin{semantics}
+Allowed for \lstinline!external!-clauses and record class annotations (\cref{annotations-for-c-mapping-of-records}).
+The included code should be valid C89 code.
+
+When \lstinline!annotation(Include="insertedCode")! appears in a record class annotation, the \lstinline!"insertedCode"! shall provide a definition (not merely a declaration without members) of the C struct to which the Modelica record is mapped.
+The struct members may be in a different order compared to the record components, additional members may exist, and padding may differ.
+The \lstinline!"insertedCode"! content shall be possible to insert where include directives are typically placed in generated code.
+See \cref{modelica:CStructTag} and \cref{modelica:CName} regarding the struct tag and the member names.
+
+\begin{nonnormative}
+For record mapped to the C struct \lstinline[language=C]!myfoo!, examples of \lstinline!"insertedCode"! include:
+\begin{itemize}
+\item
+  An \lstinline[language=C]!#include! directive including a file (header or source) with a declaration of the struct \lstinline[language=C]!myfoo!.
+  In this case the consistency is ensured by including the correct definition and thus the contents is freer, whereas the struct generated by tools must be restricted to ensure consistency.
+\item
+  A piece of C code directly defining the struct \lstinline[language=C]!myfoo!.
+\end{itemize}
+\end{nonnormative}
+
+The following applies to \lstinline!Include! annotations appearing in \lstinline!external!-clauses.
+
 The {\lstinline!annotation(Include="insertedCode")!}, used to insert function prototypes or definitions needed for calling the external function in the code generated by the Modelica compiler.
 When generating a call to the external function, the \lstinline!"insertedCode"! shall be present at the top level somewhere before the point of the call (similar to where include directives are typically placed).
 The \lstinline!Include! annotation shall be used in such a way that each external function can be handled in a separate translation unit.
@@ -2316,7 +2347,6 @@ In particular, different external functions must not have \lstinline!Include! an
 A deprecated feature is that if multiple \lstinline!Include! annotations -- possibly coming from different external functions -- have identical content, the tool shall not include this content more than once in any translation unit.
 In case calls to several external functions are generated in the same translation unit, the \lstinline!Include! annotations of the different functions must not define the same function -- except when relying on the deprecated behavior.
 
-The included code should be valid C89 code.
 If the \productionref{external-function-call} contains any \lstinline!size!-expression, the tool is responsible for ensuring that a C-header defining \lstinline[language=C]!size_t! is included before the \lstinline!"insertedCode"!.
 The \lstinline!"insertedCode"!, conditionally preceded by a header for \lstinline[language=C]!size_t!, must be a valid translation unit.
 
@@ -2385,6 +2415,8 @@ The directories may use symbolic links or use a text-file as described below: e.
 /*literal*/ constant String IncludeDirectory
 \end{lstlisting}\end{synopsis}
 \begin{semantics}
+Allowed for \lstinline!external!-clauses and record class annotations (\cref{annotations-for-c-mapping-of-records}).
+
 The {\lstinline!annotation(IncludeDirectory="modelica:/TopPackage/Resources/Include")!}, used to specify a location for header files.
 The preceding one is the default and need not be specified; but another location could be specified by using an URI name for the include directory, see \cref{external-resources}.
 \end{semantics}
@@ -2412,7 +2444,55 @@ It is analogous to the \lstinline!License! annotation for a top-level class, see
 \end{annotationdefinition*}
 
 
-\subsection{Examples}\label{examples1}
+\subsection{Annotations for C Mapping of Records}\label{annotations-for-c-mapping-of-records}
+
+Record classes may have the following annotations to support the mapping to C defined in \cref{records}.
+\begin{center}
+\begin{tabular}{l|l l}
+\hline
+\tablehead{Annotation} & \tablehead{Description} & \tablehead{Details}\\
+\hline
+\hline
+{\lstinline!CStructTag!} & Name of struct in C & \Cref{modelica:CStructTag}\\
+{\lstinline!CName!} & Name of struct member in C & \Cref{modelica:CName}\\
+{\lstinline!Include!} & Include directives & \Cref{modelica:Include}\\
+{\lstinline!IncludeDirectory!} & Directories containing header files & \Cref{modelica:IncludeDirectory}\\
+\hline
+\end{tabular}
+\end{center}
+
+The \lstinline!Include! and \lstinline!IncludeDirectory! annotations are also used with similar semantics for external functions.
+
+\begin{annotationdefinition}[CStructTag]
+\begin{synopsis}\begin{lstlisting}
+/*literal*/ constant String CStructTag
+\end{lstlisting}\end{synopsis}
+\begin{semantics}
+Allowed for record class annotations.
+
+The annotation \lstinline!CStructTag = "c_tag"! specifies that \lstinline[language=C]!c_tag! is the struct tag in the C mapping of the Modelica record class.
+By default, the struct tag is the same as the record class name.
+A default struct tag which is not a valid in C is allowed, provided that the the C mapping of the record class is not needed.
+
+If multiple record classes with \lstinline!CStructTag! annotation have the same \lstinline!c_tag!, the records must be type compatible.
+\end{semantics}
+\end{annotationdefinition}
+
+\begin{annotationdefinition}[CName]
+\begin{synopsis}\begin{lstlisting}
+/*literal*/ constant String CName
+\end{lstlisting}\end{synopsis}
+\begin{semantics}
+Allowed for component annotations inside record classes.
+
+The annotation \lstinline!CName = "c_name"! specifies that the name of the C struct member corresponding to the record component is \lstinline[language=C]!c_name!.
+By default, the struct member name is the same as the record component name.
+A default struct member name which is not a valid in C is allowed, provided that the the C mapping of the record class is not needed.
+\end{semantics}
+\end{annotationdefinition}
+
+
+\subsection{Examples}
 
 \subsubsection{Use of object libraries}
 
@@ -2547,7 +2627,6 @@ EXTLIB2_EXPORT double ExternalFunc2(double);
 \end{lstlisting}
 \end{example}
 
-
 \subsubsection{Input Parameters, Function Value}\label{input-parameters-function-value}
 
 \begin{example}
@@ -2631,6 +2710,53 @@ Example call in Modelica:
 Translated call in C:
 \begin{lstlisting}[language=C]
 z1 = myfoo(2.4, 3, &i2);
+\end{lstlisting}
+\end{example}
+
+\subsubsection{Record Mapping}\label{record-mapping-example}
+
+\begin{example}
+The following external function illustrates the annotations in \cref{annotations-for-c-mapping-of-records}.
+It assumes that the external code uses \lstinline!MyComp_! as a prefix for declarations to avoid namespace collisions.
+\begin{lstlisting}[language=modelica]
+record R
+  Real x;
+  Integer y;
+  // No Include annotation (deprecated semantics).
+  annotation(CStructTag="MyComp_R");
+end R;
+
+record R2
+  Real z;
+  Real w;
+  annotation(Include="
+struct MyComp_R2 {
+  double a,w,z; // Different order, and a is unused.
+};"
+  );
+end R2;
+
+function foo
+  input R r;
+  output R2 r2;
+external "C"
+  MyComp_foo(r, r2) annotation(
+      Include="void MyComp_foo(const struct MyComp_R*r, struct MyComp_R2*r2);"
+    );
+end foo;
+\end{lstlisting}
+This will generate C-code along these lines:
+\begin{lstlisting}[language=C]
+struct MyComp_R {
+  double x;
+  int y;
+};
+
+struct MyComp_R2 {
+  double a,w,z; // Different order, and a is unused.
+};
+
+void MyComp_foo(const struct MyComp_R*r, struct MyComp_R2*r2);
 \end{lstlisting}
 \end{example}
 

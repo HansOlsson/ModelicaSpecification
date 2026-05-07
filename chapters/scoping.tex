@@ -96,7 +96,7 @@ For a composite name of the form \lstinline!A.B! or \lstinline!A.B.C!, etc.\ loo
   All identifiers of the rest of the name (e.g., \lstinline!B! and \lstinline!B.C!) must be classes.
   That is, the composite name is comprised of one or more component names (optionally with indexing), followed by one or more class names.
 \item
-  If the identifier denotes a class, that class is temporarily flattened (as if instantiating a component without modifiers of this class, see \cref{modification-environment} and using the enclosing classes of the denoted class).
+  If the identifier denotes a scalar class, that class is temporarily flattened (as if instantiating a component without modifiers of this class, see \cref{modification-environment} and using the enclosing classes of the denoted class).
   The rest of the name (e.g., \lstinline!B! or \lstinline!B.C!) is looked up among the declared named elements of the temporary flattened class.
   The lookup will only find the element (assuming it exists) in the following cases:
   \begin{itemize}
@@ -168,6 +168,7 @@ An element declared with the prefix \lstinline!outer!\indexinline{outer} referen
 
 Outer component declarations shall not have modifications (including binding equations).
 Outer class declarations should be defined using short-class definitions without modifications.
+Outer component declarations shall not have the prefix \lstinline!input! and may only use \lstinline!output! in state machines with special semantics, see \cref{merging-variable-definitions}.
 However, see also \cref{simultaneous-inner-outer-declarations}.
 
 If the outer component declaration is a disabled conditional component (\cref{conditional-component-declaration}) it is also ignored for the automatic creation of inner component (neither causing it; nor influencing the type of it).

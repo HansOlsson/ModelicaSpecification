@@ -717,7 +717,7 @@ For example, a tool is not expected to provide means to plot a variable with \ls
 If a variable is declared in a protected section, a tool might not include it in a simulation result.
 By setting \lstinline!HideResult = false!, the modeler would like to have the variable in the simulation result, even if in the protected section.
 
-\lstinline!HideResult! is for example used in the connectors of the \lstinline!Modelica.StateGraph! library to not show variables to the modeler that are of no interest to him and would confuse him.
+\lstinline!HideResult! is for example used in the connectors of the \lstinline!Modelica.StateGraph! library to not show variables to the modeler that are of no interest to them and would confuse them.
 \end{nonnormative}
 \end{semantics}
 \end{annotationdefinition}
@@ -1746,7 +1746,8 @@ inner replaceable World world;
 \begin{semantics}
 Allowed for simple types and components of a simple types.
 If \lstinline!false!, then the component defines a relative quantity, and if \lstinline!true! an absolute quantity.
-When converting between units (e.g., in plots and where parameters are edited), the unit offset must be ignored for relative quantities.
+When converting between units, the unit offset must be ignored for relative quantities.
+Examples of unit conversion include plotting a results in a given unit (see \lstinline!Axis! in \cref{figure-plot-properties}), editing of parameters, and implicit unit conversion of unitful literals (see \cref{unitful-literals}).
 The annotation is inherited in the sense that when \lstinline!absoluteValue! is defined for a simple type, it also applies derived classes.
 When \lstinline!absoluteValue! is defined for a simple type, it also applies to components declared with the type.
 
@@ -1888,6 +1889,7 @@ The \lstinline!caption! is a caption for display in the file dialog.
 The \lstinline!groupImage! references an image using an URI (see \cref{external-resources}), and the image is intended to be shown together with the entire group (only one image per group is supported).
 Disabling the input field will not disable the image.
 The background of the \lstinline!groupImage! and any image used in HTML-documentation is recommended to be transparent (intended to be a light color) or white.
+Supported file formats are the same as for the \lstinline!Bitmap! graphical item defined in \cref{bitmap}.
 
 The \lstinline!connectorSizing! is described separately in \cref{connector-sizing}.
 A dialog annotation only containing \lstinline!showStartAttribute = false! and/or \lstinline!connectorSizing = true! does not indicate that the variable shall be shown.
@@ -2811,7 +2813,7 @@ end UserLicense;
 The \fmtannotationindex{License} annotation only has an effect at the top of an encrypted class and is then valid for the whole class hierarchy.
 (Usually the licensed class is a package.)
 
-The \lstinline!libraryKey! is a secret string from the library vendor and is the protection mechanism so that a user cannot generate his/her own authorization file since the \lstinline!libraryKey! is unknown to him/her.
+The \lstinline!libraryKey! is a secret string from the library vendor and is the protection mechanism so that a user cannot generate their own authorization file since the \lstinline!libraryKey! is unknown to them.
 
 In order that the protected class can be used either a tool specific license manager, or an authorization file (called \lstinline!licenseFile!) must be present.
 The authorization file is standardized.
