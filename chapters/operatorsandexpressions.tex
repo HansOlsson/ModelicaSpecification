@@ -1513,14 +1513,14 @@ The same restrictions as for \lstinline!pre! apply (e.g., not to be used in \lst
 reinit($x$, $\mathit{expr}$)
 \end{lstlisting}\end{synopsis}
 \begin{semantics}
-In a \lstinline!when!-clause body, reinitializes $x$ with $\mathit{expr}$ at an event instant.
+Re-initializes $x$ with $\mathit{expr}$.
+Only allowed in a \lstinline!when!-equation body, meaning that re-initialization will only occur at events.
 $x$ is a scalar or array \lstinline!Real! variable that is implicitly defined to have \lstinline!StateSelect.always!.
 \begin{nonnormative}
 It is an error if the variable cannot be selected as a state.
 \end{nonnormative}
 $\mathit{expr}$ needs to be type-compatible with $x$.
 \lstinline!reinit! can only be applied once for the same variable -- either as an individual variable or as part of an array of variables.
-It can only be applied in a \lstinline!when!-clause body in an equation section.
 See also \cref{reinit}.
 \end{semantics}
 \end{operatordefinition}
@@ -1689,7 +1689,7 @@ Discrete-time expressions\index{discrete-time!expression}\index{expression varia
 \item
   Expressions where all the subexpressions are discrete-time expressions.
 \item
-  Expressions in the a \lstinline!when!-clause body, \lstinline!initial equation!, or \lstinline!initial algorithm!.
+  Expressions in a \lstinline!when!-clause body, \lstinline!initial equation!, or \lstinline!initial algorithm!.
 \item
   Expressions in a clocked discrete-time partition, see \cref{clocked-discrete-time-and-clocked-discretized-continuous-time-partition}.
 \item
@@ -1712,7 +1712,7 @@ Discrete-time expressions\index{discrete-time!expression}\index{expression varia
   Expressions in functions not having annotation \lstinline!GenerateEvents = true! (\cref{modelica:GenerateEvents}), behave as though they were discrete-time expressions.
 \end{itemize}
 
-Inside an \lstinline!if!-expression; or in an \lstinline!if!-clause body, a \lstinline!while!-statement, or a \lstinline!for!-clause, that is controlled by a non-discrete-time (that is continuous-time, but not discrete-time) switching expression and not in the \lstinline!when!-clause body, it is not legal to have assignments to discrete-time variables, equations between discrete-time expressions, or real elementary relations/functions that should generate events.
+Inside an \lstinline!if!-expression or in an \lstinline!if!-clause body, a \lstinline!while!-statement or a \lstinline!for!-clause, that is controlled by a non-discrete-time (that is continuous-time, but not discrete-time) switching expression and not in the \lstinline!when!-clause body, it is not legal to have assignments to discrete-time variables, equations between discrete-time expressions, or real elementary relations/functions that should generate events.
 
 \begin{nonnormative}
 The restriction above is necessary in order to guarantee that all equations for discrete-time variable are discrete-time expressions, and to ensure that crossing functions do not become active between events.
