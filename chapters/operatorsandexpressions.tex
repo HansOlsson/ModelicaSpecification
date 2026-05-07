@@ -621,7 +621,7 @@ Integer modulus of $x / y$, i.e., \lstinline!mod($x$, $y$) = $x$ - floor($x$ / $
 Result and arguments shall have type \lstinline!Real! or \lstinline!Integer!.
 If either of the arguments is \lstinline!Real! the result is \lstinline!Real! otherwise \lstinline!Integer!.
 \begin{nonnormative}
-Note, outside of a \lstinline!when!-clause body state events are triggered when the return value changes discontinuously.
+Note, outside of \lstinline!when!-clause bodies, state events are triggered when the return value changes discontinuously.
 Examples: \lstinline!mod(3, 1.4) = 0.2!, \lstinline!mod(-3, 1.4) = 1.2!, \lstinline!mod(3, -1.4) = -1.2!.
 \end{nonnormative}
 \end{semantics}
@@ -636,7 +636,7 @@ Integer remainder of $x / y$, such that \lstinline!div($x$, $y$) * $y$ + rem($x$
 Result and arguments shall have type \lstinline!Real! or \lstinline!Integer!.
 If either of the arguments is \lstinline!Real! the result is \lstinline!Real! otherwise \lstinline!Integer!.
 \begin{nonnormative}
-Note, outside of a \lstinline!when!-clause body state events are triggered when the return value changes discontinuously.
+Note, outside of \lstinline!when!-clause bodies, state events are triggered when the return value changes discontinuously.
 Examples: \lstinline!rem(3, 1.4) = 0.2!, \lstinline!rem(-3, 1.4) = -0.2!.
 \end{nonnormative}
 \end{semantics}
@@ -650,7 +650,7 @@ ceil($x$)
 Smallest integer not less than $x$.
 Result and argument shall have type \lstinline!Real!.
 \begin{nonnormative}
-Note, outside of a \lstinline!when!-clause body state events are triggered when the return value changes discontinuously.
+Note, outside of \lstinline!when!-clause bodies, state events are triggered when the return value changes discontinuously.
 \end{nonnormative}
 \end{semantics}
 \end{operatordefinition}
@@ -663,7 +663,7 @@ floor($x$)
 Largest integer not greater than $x$.
 Result and argument shall have type \lstinline!Real!.
 \begin{nonnormative}
-Note, outside of a \lstinline!when!-clause body state events are triggered when the return value changes discontinuously.
+Note, outside of \lstinline!when!-clause bodies, state events are triggered when the return value changes discontinuously.
 \end{nonnormative}
 \end{semantics}
 \end{operatordefinition}
@@ -677,7 +677,7 @@ Largest integer not greater than $x$.
 The argument shall have type \lstinline!Real!.
 The result has type \lstinline!Integer!.
 \begin{nonnormative}
-Note, outside of a \lstinline!when!-clause body state events are triggered when the return value changes discontinuously.
+Note, outside of \lstinline!when!-clause bodies, state events are triggered when the return value changes discontinuously.
 \end{nonnormative}
 \end{semantics}
 \end{operatordefinition}
